@@ -1,10 +1,11 @@
-const express = require('express');
-const axios = require('axios');
-const app = express();
-app.use(express.json());
-
 app.post('/webhook', async (req, res) => {
   const cripto = req.body.queryResult.parameters.cripto;
+  if (!cripto || typeof cripto !== 'string') {
+    return res.status(400).json({
+      fulfillmentMessages: [{ text: { text: ['Input non valido'] } }]
+    });
+  }
+
   try {
     const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${cripto}&vs_currencies=usd`);
     const price = response.data[cripto]?.usd;
@@ -13,16 +14,14 @@ app.post('/webhook', async (req, res) => {
         fulfillmentMessages: [{ text: { text: [`Il prezzo di ${cripto} è $${price}`] } }]
       });
     } else {
-       res.json({
+      res.json({
         fulfillmentMessages: [{ text: { text: [`Non ho trovato informazioni per ${cripto}`] } }]
       });
     }
   } catch (error) {
     console.error(error);
-    res.json({
-      fulfillmentMessages: [{ text: { text: [`Si è verificato un errore`] } }]
+    res.status(500).json({
+      fulfillmentMessages: [{ text: { text: ['Si è verificato un errore nel server'] } }]
     });
   }
 });
-
-app.listen(3000, () => console.log('Server listening on port 3000'));
