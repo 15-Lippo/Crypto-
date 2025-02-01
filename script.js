@@ -55,3 +55,21 @@ async function fetchPredictions() {
 fetchCryptoData();
 fetchPredictions();
 setInterval(fetchCryptoData, 60000);
+async function fetchCryptoData() {
+    const dataContainer = document.getElementById('data-container');
+    dataContainer.innerHTML = '';  // Pulisci il contenitore
+
+    try {
+        for (const cryptoId of cryptoIds) {
+            const response = await fetch(`${apiUrl}/api/price/${cryptoId}`);
+            if (!response.ok) throw new Error(`Errore nella richiesta per ${cryptoId}`);
+            const data = await response.json();
+            dataContainer.innerHTML += `
+                <p>Prezzo ${cryptoId} (USD): <strong>$${data.price}</strong></p>
+            `;
+        }
+    } catch (error) {
+        console.error('Errore nel recupero dei dati:', error);
+        dataContainer.innerHTML = `<p style="color: red;">Errore nel caricamento dei dati.</p>`;
+    }
+}
