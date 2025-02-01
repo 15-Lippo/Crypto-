@@ -1,36 +1,10 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
-import numpy as np
-from tensorflow.keras.models import load_model
-import requests
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 
-app = Flask(__name__)
-CORS(app, origins=["https://tuodominio.com"])  # Limita CORS a domini specifici
-
-# Carica il modello pre-addestrato
-model = load_model('model/crypto_model.h5')
-
-@app.route('/api/price/<crypto_id>', methods=['GET'])
-def get_price(crypto_id):
-    try:
-        price = get_crypto_data(crypto_id)
-        return jsonify({'crypto': crypto_id, 'price': price})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/predict/<crypto_id>', methods=['GET'])
-def predict(crypto_id):
-    try:
-        input_data = np.array([[1, 2, 3, 4, 5]])  # Esempio di dati di input
-        prediction = model.predict(input_data)
-        return jsonify({'crypto': crypto_id, 'prediction': prediction.tolist()})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
-@app.route('/api/predict/<crypto_id>', methods=['GET'])
-def predict(crypto_id):
-    input_data = np.array([[1, 2, 3, 4, 5]])  # Esempio di dati di input
-    prediction = model.predict(input_data)
-    return jsonify({'crypto': crypto_id, 'prediction': prediction.tolist()})
+# Esempio di modello semplice
+model = Sequential([
+    Dense(10, input_shape=(5,), activation='relu'),
+    Dense(1, activation='linear')
+])
+model.compile(optimizer='adam', loss='mse')
+model.save('model/crypto_model.h5')
