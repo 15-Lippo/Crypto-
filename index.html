@@ -24,6 +24,13 @@
             <h2>Previsioni</h2>
             <canvas id="predictionChart"></canvas>
         </section>
+
+        <section id="chatbot">
+            <h2>Chatbot</h2>
+            <div id="chat-box"></div>
+            <input type="text" id="user-input" placeholder="Scrivi la tua domanda..." aria-label="Input del chatbot">
+            <button onclick="sendMessage()" aria-label="Invia messaggio">Invia</button>
+        </section>
     </main>
 
     <footer>
@@ -32,33 +39,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
-</body>
-</html>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Chatbot</title>
-</head>
-<body>
-    <div id="chat-box"></div>
-    <input type="text" id="user-input" placeholder="Scrivi la tua domanda...">
-    <button onclick="sendMessage()">Invia</button>
-
-    <script>
-    async function sendMessage() {
-      const input = document.getElementById('user-input').value;
-      document.getElementById('chat-box').innerHTML += `<p>Utente: ${input}</p>`;
-      document.getElementById('user-input').value = '';
-      //Invia la domanda al backend, o direttamente alla piattaforma ChatBot
-      const response = await fetch('/webhook', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({queryResult: { parameters: {cripto: input } }})
-            });
-
-        const data = await response.json();
-        document.getElementById('chat-box').innerHTML += `<p>Bot: ${data.fulfillmentMessages[0].text.text[0]}</p>`;
-    }
-    </script>
 </body>
 </html>
